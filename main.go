@@ -20,7 +20,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	p := Processor.New(cfg, os.Stdout)
+	p := processor.New(cfg, os.Stdout)
 	p.ProcessEvents(events)
 
 }

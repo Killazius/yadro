@@ -1,4 +1,4 @@
-package Processor
+package processor
 
 import (
 	"fmt"
