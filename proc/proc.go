@@ -19,6 +19,7 @@ type Proc struct {
 	logger      io.Writer                      // Интерфейс для логирования
 }
 
+// New отвечает за создание нового объекта процессора, если не задан вывод, то берет стандартный вывод в консоль
 func New(cfg *config.Config, output io.Writer) *Proc {
 	if output == nil {
 		output = os.Stdout
@@ -30,13 +31,17 @@ func New(cfg *config.Config, output io.Writer) *Proc {
 	}
 }
 
+// logEvent логирует события связанные с гонкой
 func (p *Proc) logEvent(t time.Time, msg string) {
 	fmt.Fprintf(p.logger, "[%s] %s\n", t.Format("15:04:05.000"), msg)
 }
+
+// logStat логирует статистику участника гонки
 func (p *Proc) logStat(msg string) {
 	fmt.Fprintf(p.logger, "%s\n", msg)
 }
 
+// getCompetitor возвращает участника с указанным ID.
 func (p *Proc) getCompetitor(id int) *competitor.Competitor {
 	if _, ok := p.competitors[id]; !ok {
 		p.competitors[id] = &competitor.Competitor{
@@ -47,6 +52,8 @@ func (p *Proc) getCompetitor(id int) *competitor.Competitor {
 	}
 	return p.competitors[id]
 }
+
+// ProcessEvents обрабатывает список событий, проверяет дисквалификации и собирает статистику
 func (p *Proc) ProcessEvents(events []*event.Event) {
 	for _, e := range events {
 		p.processEvent(e)
@@ -55,6 +62,7 @@ func (p *Proc) ProcessEvents(events []*event.Event) {
 	p.getStats()
 }
 
+// processEvent обрабатывает одно событие и обновляет состояние участника
 func (p *Proc) processEvent(e *event.Event) {
 	c := p.getCompetitor(e.CompetitorID)
 
@@ -134,6 +142,7 @@ func (p *Proc) processEvent(e *event.Event) {
 	}
 }
 
+// checkDisqual проверяет и отмечает участников, которые не стартовали вовремя
 func (p *Proc) checkDisqual() {
 	for _, c := range p.competitors {
 		if c.Registered && !c.Started && time.Now().After(c.PlannedStart.Add(30*time.Second)) {
@@ -143,6 +152,7 @@ func (p *Proc) checkDisqual() {
 	}
 }
 
+// getStats сортирует участников и формирует статистику по результатам гонки
 func (p *Proc) getStats() {
 	sortedCompetitors := make([]*competitor.Competitor, 0, len(p.competitors))
 	for _, c := range p.competitors {

@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// eventPath задает путь к файлу с событиями гонки
 const eventPath = "sunny_5_skiers/events"
 
 func main() {

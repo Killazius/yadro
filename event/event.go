@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// Type - описание события по ID
 type Type int
 
 const (
@@ -33,6 +34,7 @@ type Event struct {
 	ExtraParams  string    // Дополнительные параметры в формате строки
 }
 
+// parse обрабатывает строку с событием и возвращает Event или ошибку
 func parse(line string) (*Event, error) {
 	parts := strings.Split(line, " ")
 	if len(parts) < 3 {
@@ -67,6 +69,7 @@ func parse(line string) (*Event, error) {
 	}, nil
 }
 
+// Load считывает данные из Reader, парсит при помощи parse и возращает слайс из событий
 func Load(r io.Reader) ([]*Event, error) {
 	scanner := bufio.NewScanner(r)
 	events := make([]*Event, 0)

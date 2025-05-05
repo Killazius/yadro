@@ -20,6 +20,7 @@ type Config struct {
 	StartDelta  string `json:"startDelta"`  // Интервал между стартами участников
 }
 
+// MustLoad - проверяет есть ли файл по пути configPath и записывает данные в структуру Config
 func MustLoad() *Config {
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		log.Fatalf("config file does not exist: %s", configPath)
