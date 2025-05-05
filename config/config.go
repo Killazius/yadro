@@ -10,13 +10,14 @@ const (
 	configPath = "sunny_5_skiers/config.json"
 )
 
+// Config - структура для хранения конфигурации гонки по биатлону
 type Config struct {
-	Laps        int    `json:"laps"`
-	LapLen      int    `json:"lapLen"`
-	PenaltyLen  int    `json:"penaltyLen"`
-	FiringLines int    `json:"firingLines"`
-	Start       string `json:"start"`
-	StartDelta  string `json:"startDelta"`
+	Laps        int    `json:"laps"`        // Количество кругов в гонке
+	LapLen      int    `json:"lapLen"`      // Длина одного круга
+	PenaltyLen  int    `json:"penaltyLen"`  // Длина штрафного круга
+	FiringLines int    `json:"firingLines"` // Количество стрельбищ
+	Start       string `json:"start"`       // Время начала гонки
+	StartDelta  string `json:"startDelta"`  // Интервал между стартами участников
 }
 
 func MustLoad() *Config {

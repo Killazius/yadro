@@ -12,10 +12,11 @@ import (
 	"time"
 )
 
+// Proc - структура процессора, который связывает события и участников гонки, отвечает за статистику
 type Proc struct {
-	cfg         *config.Config
-	competitors map[int]*competitor.Competitor
-	logger      io.Writer
+	cfg         *config.Config                 // Конфигурация гонки
+	competitors map[int]*competitor.Competitor // Текущие участники
+	logger      io.Writer                      // Интерфейс для логирования
 }
 
 func New(cfg *config.Config, output io.Writer) *Proc {

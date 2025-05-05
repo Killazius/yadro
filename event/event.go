@@ -12,24 +12,25 @@ import (
 type Type int
 
 const (
-	Register Type = iota + 1
-	SetStartTime
-	OnStartLine
-	Started
-	OnFiringRange
-	Hit
-	LeftFiringRange
-	EnteredPenaltyLaps
-	LeftPenaltyLaps
-	EndMainLap
-	CantContinue
+	Register           Type = iota + 1 // 1: The competitor registered
+	SetStartTime                       // 2: The start time was set by a draw
+	OnStartLine                        // 3: The competitor is on the start line
+	Started                            // 4: The competitor has started
+	OnFiringRange                      // 5: The competitor is on the firing range
+	Hit                                // 6: The target has been hit
+	LeftFiringRange                    // 7: The competitor left the firing range
+	EnteredPenaltyLaps                 // 8: The competitor entered the penalty laps
+	LeftPenaltyLaps                    // 9: The competitor left the penalty laps
+	EndMainLap                         // 10: The competitor ended the main lap
+	CantContinue                       // 11: The competitor can't continue
 )
 
+// Event - структура для описания события в гонке
 type Event struct {
-	Time         time.Time
-	ID           Type
-	CompetitorID int
-	ExtraParams  string
+	Time         time.Time // Время возникновения события
+	ID           Type      // Тип события (из перечисления Type)
+	CompetitorID int       // Идентификатор участника, к которому относится событие
+	ExtraParams  string    // Дополнительные параметры в формате строки
 }
 
 func parse(line string) (*Event, error) {
