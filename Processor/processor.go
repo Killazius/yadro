@@ -1,4 +1,4 @@
-package proc
+package Processor
 
 import (
 	"fmt"
@@ -12,19 +12,19 @@ import (
 	"time"
 )
 
-// Proc - структура процессора, который связывает события и участников гонки, отвечает за статистику
-type Proc struct {
+// Processor - структура процессора, который связывает события и участников гонки, отвечает за статистику
+type Processor struct {
 	cfg         *config.Config                 // Конфигурация гонки
 	competitors map[int]*competitor.Competitor // Текущие участники
 	logger      io.Writer                      // Интерфейс для логирования
 }
 
 // New отвечает за создание нового объекта процессора, если не задан вывод, то берет стандартный вывод в консоль
-func New(cfg *config.Config, output io.Writer) *Proc {
+func New(cfg *config.Config, output io.Writer) *Processor {
 	if output == nil {
 		output = os.Stdout
 	}
-	return &Proc{
+	return &Processor{
 		cfg:         cfg,
 		competitors: make(map[int]*competitor.Competitor),
 		logger:      output,
@@ -32,29 +32,31 @@ func New(cfg *config.Config, output io.Writer) *Proc {
 }
 
 // logEvent логирует события связанные с гонкой
-func (p *Proc) logEvent(t time.Time, msg string) {
+func (p *Processor) logEvent(t time.Time, msg string) {
 	fmt.Fprintf(p.logger, "[%s] %s\n", t.Format("15:04:05.000"), msg)
 }
 
 // logStat логирует статистику участника гонки
-func (p *Proc) logStat(msg string) {
+func (p *Processor) logStat(msg string) {
 	fmt.Fprintf(p.logger, "%s\n", msg)
 }
 
 // getCompetitor возвращает участника с указанным ID.
-func (p *Proc) getCompetitor(id int) *competitor.Competitor {
-	if _, ok := p.competitors[id]; !ok {
-		p.competitors[id] = &competitor.Competitor{
-			ID:            id,
-			LapStartTimes: make([]time.Time, 0),
-			LapTimes:      make([]time.Duration, 0),
-		}
+func (p *Processor) getCompetitor(id int) *competitor.Competitor {
+	if c, ok := p.competitors[id]; ok {
+		return c
 	}
-	return p.competitors[id]
+	c := &competitor.Competitor{
+		ID:            id,
+		LapStartTimes: make([]time.Time, 0),
+		LapTimes:      make([]time.Duration, 0),
+	}
+	p.competitors[id] = c
+	return c
 }
 
 // ProcessEvents обрабатывает список событий, проверяет дисквалификации и собирает статистику
-func (p *Proc) ProcessEvents(events []*event.Event) {
+func (p *Processor) ProcessEvents(events []*event.Event) {
 	for _, e := range events {
 		p.processEvent(e)
 	}
@@ -63,7 +65,7 @@ func (p *Proc) ProcessEvents(events []*event.Event) {
 }
 
 // processEvent обрабатывает одно событие и обновляет состояние участника
-func (p *Proc) processEvent(e *event.Event) {
+func (p *Processor) processEvent(e *event.Event) {
 	c := p.getCompetitor(e.CompetitorID)
 
 	switch e.ID {
@@ -143,7 +145,7 @@ func (p *Proc) processEvent(e *event.Event) {
 }
 
 // checkDisqual проверяет и отмечает участников, которые не стартовали вовремя
-func (p *Proc) checkDisqual() {
+func (p *Processor) checkDisqual() {
 	for _, c := range p.competitors {
 		if c.Registered && !c.Started && time.Now().After(c.PlannedStart.Add(30*time.Second)) {
 			c.Disqualified = true
@@ -153,7 +155,7 @@ func (p *Proc) checkDisqual() {
 }
 
 // getStats сортирует участников и формирует статистику по результатам гонки
-func (p *Proc) getStats() {
+func (p *Processor) getStats() {
 	sortedCompetitors := make([]*competitor.Competitor, 0, len(p.competitors))
 	for _, c := range p.competitors {
 		sortedCompetitors = append(sortedCompetitors, c)

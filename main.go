@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/Killazius/yadro/Processor"
 	"github.com/Killazius/yadro/config"
 	"github.com/Killazius/yadro/event"
-	"github.com/Killazius/yadro/proc"
 	"os"
 )
 
@@ -20,7 +20,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	p := proc.New(cfg, os.Stdout)
+	p := Processor.New(cfg, os.Stdout)
 	p.ProcessEvents(events)
 
 }
