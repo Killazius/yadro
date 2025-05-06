@@ -87,9 +87,9 @@ func (p *Processor) processEvent(e *event.Event) {
 		p.logEvent(e.Time, fmt.Sprintf("The competitor(%d) is on the start line", c.ID))
 
 	case event.Started:
-		windowStart := c.PlannedStart.Add(-30 * time.Second)
-		windowEnd := c.PlannedStart.Add(30 * time.Second)
-		if e.Time.Before(windowStart) || e.Time.After(windowEnd) {
+		start := c.PlannedStart.Add(-30 * time.Second)
+		end := c.PlannedStart.Add(30 * time.Second)
+		if e.Time.Before(start) || e.Time.After(end) {
 			c.Disqualified = true
 			p.logEvent(e.Time, fmt.Sprintf("The competitor(%d) is disqualified", c.ID))
 			return

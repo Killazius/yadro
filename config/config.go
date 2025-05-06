@@ -6,10 +6,6 @@ import (
 	"os"
 )
 
-const (
-	configPath = "sunny_5_skiers/config.json"
-)
-
 // Config - структура для хранения конфигурации гонки по биатлону
 type Config struct {
 	Laps        int    `json:"laps"`        // Количество кругов в гонке
@@ -20,14 +16,14 @@ type Config struct {
 	StartDelta  string `json:"startDelta"`  // Интервал между стартами участников
 }
 
-// MustLoad - проверяет есть ли файл по пути configPath и записывает данные в структуру Config
-func MustLoad() *Config {
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		log.Fatalf("config file does not exist: %s", configPath)
+// MustLoad - проверяет есть ли файл по пути path и записывает данные в структуру Config
+func MustLoad(path string) *Config {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		log.Fatalf("config file does not exist: %s", path)
 	}
 
 	var cfg Config
-	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
+	if err := cleanenv.ReadConfig(path, &cfg); err != nil {
 		log.Fatalf("Error loading config: %s", err)
 	}
 	return &cfg
