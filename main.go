@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/Killazius/yadro/Processor"
 	"github.com/Killazius/yadro/config"
 	"github.com/Killazius/yadro/event"
+	"github.com/Killazius/yadro/processor"
 	"os"
 )
 
