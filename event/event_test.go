@@ -1,6 +1,7 @@
 package event
 
 import (
+	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
 	"time"
@@ -163,10 +164,7 @@ func TestParse(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := parse(tt.line)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			require.Equal(t, tt.wantErr, err != nil, tt.name)
 			if !reflect.DeepEqual(got, tt.event) {
 				t.Errorf("= %v, want %v", got, tt.event)
 			}
