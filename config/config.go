@@ -2,7 +2,6 @@ package config
 
 import (
 	"github.com/ilyakaznacheev/cleanenv"
-	"log"
 	"os"
 )
 
@@ -19,12 +18,12 @@ type Config struct {
 // MustLoad - проверяет есть ли файл по пути path и записывает данные в структуру Config
 func MustLoad(path string) *Config {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		log.Fatalf("config file does not exist: %s", path)
+		panic("config file does not exist")
 	}
 
 	var cfg Config
 	if err := cleanenv.ReadConfig(path, &cfg); err != nil {
-		log.Fatalf("Error loading config: %s", err)
+		panic("error loading config")
 	}
 	return &cfg
 }
