@@ -194,28 +194,18 @@ func (p *Processor) getStats() {
 				builder.WriteString(", ")
 			}
 			speed := float64(p.cfg.LapLen) / lap.Seconds()
-			hours := int(lap.Hours())
-			minutes := int(lap.Minutes()) % 60
-			seconds := int(lap.Seconds()) % 60
-			millis := int(lap.Milliseconds()) % 1000
-			builder.WriteString(fmt.Sprintf("{%02d:%02d:%02d.%03d, %.3f}",
-				hours, minutes, seconds, millis, speed))
+			builder.WriteString(fmt.Sprintf("{%v, %.3f}", durationToString(lap), speed))
 		}
 		builder.WriteString(strings.Repeat(" {,}", p.cfg.Laps-len(c.LapTimes)))
 		builder.WriteString("] ")
 
 		if c.PenaltyTime > 0 {
-			hours := int(c.PenaltyTime.Hours())
-			minutes := int(c.PenaltyTime.Minutes()) % 60
-			seconds := int(c.PenaltyTime.Seconds()) % 60
-			millis := int(c.PenaltyTime.Milliseconds()) % 1000
 
 			missedShots := p.cfg.FiringLines*5 - c.Hits
 			if missedShots > 0 {
 				penaltyDistance := float64(p.cfg.PenaltyLen * missedShots)
 				speed := penaltyDistance / c.PenaltyTime.Seconds()
-				builder.WriteString(fmt.Sprintf("{%02d:%02d:%02d.%03d, %.3f} ",
-					hours, minutes, seconds, millis, speed))
+				builder.WriteString(fmt.Sprintf("{%v, %.3f} ", durationToString(c.PenaltyTime), speed))
 			} else {
 				builder.WriteString("{00:00:00.000, 0.000} ")
 			}
@@ -227,4 +217,12 @@ func (p *Processor) getStats() {
 
 		p.logStat(builder.String())
 	}
+}
+
+func durationToString(d time.Duration) string {
+	h := int(d.Hours())
+	m := int(d.Minutes()) % 60
+	s := int(d.Seconds()) % 60
+	ms := int(d.Milliseconds()) % 1000
+	return fmt.Sprintf("%02d:%02d:%02d.%03d", h, m, s, ms)
 }
